@@ -16,7 +16,7 @@ Start three nodes cluster on DO
 ```
 ---
 - hosts: localhost
-  gather_facts: false
+  gather_facts: true
   connection: local
 
   tasks:
