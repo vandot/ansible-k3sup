@@ -153,12 +153,14 @@ def install(module, k3sup_bin, action, ip, local_path, local, merge,
     elif action == "agent":
         action = "join"
     cmd_args = [k3sup_bin, action, "--ip", ip,
-                "--local-path", local_path, "--ssh-key", ssh_key,
-                "--ssh-port", str(ssh_port), "--user", user]
+                "--ssh-key", ssh_key, "--ssh-port", str(ssh_port),
+                "--user", user]
     if action == "install":
         cmd_args.extend(["--context", context])
-    if merge:
+    if local:
         cmd_args.append("--local")
+    if local_path:
+        cmd_args.append("--local-path")
     if merge:
         cmd_args.append("--merge")
     if server_ip:
@@ -206,10 +208,12 @@ def is_cluster_installed(module, k3sup_bin, action, ip, local_path,
     elif action == "agent":
         action = "join"
     cmd_args = [k3sup_bin, action, "--skip-install", "--ip", ip,
-                "--local-path", local_path, "--ssh-key", ssh_key,
-                "--ssh-port", str(ssh_port), "--user", user]
-    if merge:
+                "--ssh-key", ssh_key, "--ssh-port", str(ssh_port),
+                "--user", user]
+    if local:
         cmd_args.append("--local")
+    if local_path:
+        cmd_args.append("--local-path")
     if merge:
         cmd_args.append("--merge")
     if server_ip:
@@ -243,8 +247,7 @@ def main():
             sudo=dict(required=False, default=True, type="bool"),
             skip_install=dict(required=False, default=False, type="bool"),
             ssh_key=dict(required=False, default="~/.ssh/id_rsa", type="str"),
-            local_path=dict(required=False, default="./kubeconfig",
-                            type="str"),
+            local_path=dict(required=False, type="str"),
             local=dict(required=False, default=False, type="bool"),
             merge=dict(required=False, default=False, type="bool"),
             no_extras=dict(required=False, default=False, type="bool"),
