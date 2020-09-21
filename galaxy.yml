@@ -1,0 +1,15 @@
+---
+namespace: "vandot"
+name: "k3sup"
+version: "0.1.0"
+readme: "README.md"
+authors:
+  - "Chris Arceneaux (https://ivan.vandot.rs/)"
+description: Manage k3sup
+license_file: "LICENSE"
+tags:
+  - k3sup
+  - k3s
+  - containerd
+  - lightweight
+repository: "https://github.com/vandot/ansible-k3sup"

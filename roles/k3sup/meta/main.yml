@@ -1,0 +1,26 @@
+galaxy_info:
+  role_name: k3sup
+  author: Ivan Vandot 
+  description: Ansible role for installing k3sup a light-weight utility to get from zero to KUBECONFIG with k3s
+
+  license: BSD-3-Clause 
+
+  min_ansible_version: 2.7
+
+  platforms:
+  - name: Ubuntu 
+    versions:
+    - all
+  - name: macOS 
+    versions:
+    - all
+  - name: Windows 
+    versions:
+    - all
+
+  galaxy_tags:
+  - containerd
+  - k3s
+  - lightweight
+
+dependencies: []

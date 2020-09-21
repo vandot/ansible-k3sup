@@ -1,0 +1,11 @@
+---
+
+- name: Check to see if k3sup_state is a supported value
+  assert:
+    that:
+      - k3sup_state in ['installed', 'uninstalled']
+    fail_msg: "k3sup_state not valid. Check README.md for details."
+    success_msg: "k3sup_state is valid."
+  when: k3sup_state is defined
+
+- import_tasks: state-{{ (k3sup_state | lower) | default('installed') }}.yml

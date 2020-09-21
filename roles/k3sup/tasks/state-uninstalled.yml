@@ -1,0 +1,11 @@
+---
+
+- name: Set k3sup_install_dir for Windows if not configured
+  set_fact:
+    k3sup_install_dir: $HOME/bin
+  when: ansible_facts['os_family'] == "Windows" and k3sup_install_dir == "/usr/local/bin" 
+
+- name: Ensure k3sup binary is uninstalled
+  file:
+    state: absent
+    path: "{{ k3sup_install_dir }}/k3sup"

@@ -1,0 +1,56 @@
+---
+
+- import_tasks: get-latest.yml
+  when: k3sup_release_version is not defined or not k3sup_release_version
+
+- name: Ensure suffix information is set as a fact
+  set_fact:
+    k3sup_suffix: "{{ k3sup_arch_map[ansible_architecture].suffix }}"
+
+- name: Ensure suffix information is overridden for Windows and Macos
+  set_fact:
+    k3sup_suffix: "{{ k3sup_os_map[ansible_os_family].suffix }}"
+  when: k3sup_os_map[ansible_os_family].suffix is defined 
+
+- name: Ensure URLs are set as facts for downloading binaries
+  set_fact:
+    k3sup_binary_url: "{{ k3sup_github_download_url }}/{{ k3sup_release_version }}/k3sup{{ k3sup_suffix }}"
+    k3sup_hash_url: "{{ k3sup_github_download_url }}/{{ k3sup_release_version }}/k3sup{{ k3sup_suffix }}.sha256"
+
+- name: Set k3sup_install_dir for Windows if not configured
+  set_fact:
+    k3sup_install_dir: $HOME/bin
+  when: ansible_facts['os_family'] == "Windows" and k3sup_install_dir == "/usr/local/bin"  
+
+- name: Ensure the k3sup hashsum is downloaded
+  uri:
+    url: "{{ k3sup_hash_url }}"
+    return_content: true
+  register: k3sup_hash_sum_raw
+
+- name: Ensure sha256sum is set from hashsum variable
+  set_fact:
+    k3sup_hash_sum: "{{ (k3sup_hash_sum_raw.content.split('\n') | select('search', 'k3sup') | first).split() | first }}"
+  changed_when: false
+
+- name: Ensure installation directory exists
+  file:
+    path: "{{ k3sup_install_dir }}"
+    state: directory
+
+- name: Ensure k3sup binary is installed
+  get_url:
+    url: "{{ k3sup_binary_url }}"
+    dest: "{{ k3sup_install_dir }}/k3sup"
+    checksum: "sha256:{{ k3sup_hash_sum }}"
+    mode: 0755
+  when: k3sup_non_root is defined and k3sup_non_root 
+
+- name: Ensure k3sup binary is installed (root)
+  get_url:
+    url: "{{ k3sup_binary_url }}"
+    dest: "{{ k3sup_install_dir }}/k3sup"
+    checksum: "sha256:{{ k3sup_hash_sum }}"
+    mode: 0755
+  become: true
+  when: k3sup_non_root is not defined or not k3sup_non_root

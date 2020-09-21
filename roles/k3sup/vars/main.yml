@@ -1,0 +1,29 @@
+---
+# File: main.yml - Helper variables for k3sup
+
+k3sup_github_api: "{{ k3sup_github_url | replace('github.com', 'api.github.com') }}"
+k3sup_github_api_releases: "{{ k3sup_github_api | replace('.com', '.com/repos') }}/releases/latest"
+k3sup_github_download_url: "{{ k3sup_github_url }}/releases/download"
+
+k3sup_arch_map:
+  amd64:
+    suffix: ""
+  x86_64:
+    suffix: ""
+  arm64:
+    suffix: "-arm64"
+  aarch64:
+    suffix: "-arm64"
+  arm:
+    suffix: "-armhf"
+  arm7:
+    suffix: "-armhf"
+  armv7l:
+    suffix: "-armhf"
+  armhf:
+    suffix: "-armhf"
+k3sup_os_map: 
+  Windows:
+    suffix: ".exe"
+  Darwin:
+    suffix: "-darwin"

@@ -1,0 +1,12 @@
+---
+
+- name: Get the latest release version from GitHub
+  uri:
+    url: "{{ k3sup_github_api_releases }}"
+    return_content: true
+    body_format: json
+  register: k3sup_latest_release
+
+- name: Ensure the release version is set as a fact
+  set_fact:
+    k3sup_release_version: "{{ k3sup_latest_release.json.tag_name }}"
