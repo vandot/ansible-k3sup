@@ -18,7 +18,8 @@ Start three nodes cluster on DO
 - hosts: localhost
   gather_facts: true
   connection: local
-
+  roles:
+    - role: vandot.k3sup.k3sup
   tasks:
     - name: Create ssh key
       community.digitalocean.digital_ocean_sshkey:
