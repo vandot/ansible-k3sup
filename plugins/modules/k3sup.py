@@ -106,7 +106,11 @@ options:
     type: str
   k3s_version:
     description:
-    - Set the specific version of k3s, i.e. v0.9.1
+    - Set the specific version of k3s, i.e. v0.9.1, overrides k3s_channel
+    type: str
+  k3s_channel:
+    description:
+    - Set the specific release channel - stable, latest, or i.e. v1.18
     type: str
   ipsec:
     description:
@@ -147,7 +151,8 @@ from ansible.module_utils.basic import AnsibleModule
 def install(module, k3sup_bin, action, ip, local_path, local, merge,
             ssh_key, ssh_port, user, server_ip, server_ssh_port,
             server_user, server, cluster, datastore, sudo, skip_install,
-            no_extras, context, k3s_extra_args, k3s_version, ipsec):
+            no_extras, context, k3s_extra_args, k3s_version, k3s_channel,
+            ipsec):
     if action == "server":
         action = "install"
     elif action == "agent":
@@ -185,6 +190,8 @@ def install(module, k3sup_bin, action, ip, local_path, local, merge,
         cmd_args.extend(["--k3s-extra-args", k3s_extra_args])
     if k3s_version:
         cmd_args.extend(["--k3s-version", k3s_version])
+    if k3s_channel:
+        cmd_args.extend(["--k3s-channel", k3s_channel])
     if ipsec:
         cmd_args.append("--ipsec")
 
@@ -255,6 +262,7 @@ def main():
             ssh_port=dict(required=False, default=22, type="int"),
             k3s_extra_args=dict(required=False, default=None, type="str"),
             k3s_version=dict(required=False, default=None, type="str"),
+            k3s_channel=dict(required=False, default=None, type="str"),
             ipsec=dict(required=False, default=False, type="bool"),
             server=dict(required=False, default=False, type="bool"),
             server_ip=dict(required=False, default=None, type="str"),
@@ -281,6 +289,7 @@ def main():
     ssh_port = module.params["ssh_port"]
     k3s_extra_args = module.params["k3s_extra_args"]
     k3s_version = module.params["k3s_version"]
+    k3s_channel = module.params["k3s_channel"]
     ipsec = module.params["ipsec"]
     server = module.params["server"]
     server_ip = module.params["server_ip"]
@@ -310,7 +319,7 @@ def main():
                                          datastore, sudo, skip_install,
                                          no_extras, context,
                                          k3s_extra_args, k3s_version,
-                                         ipsec)
+                                         k3s_channel, ipsec)
 
     module.exit_json(changed=changed, cmd=cmd, action=action, ip=ip,
                      stdout=out, stderr=err)
