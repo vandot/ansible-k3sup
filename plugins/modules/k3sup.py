@@ -1,8 +1,4 @@
-#!/usr/bin/python
-
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
+#!/usr/bin/env python
 
 DOCUMENTATION = r'''
 ---
@@ -160,7 +156,7 @@ def install(module, k3sup_bin, action, ip, local_path, local, merge,
     cmd_args = [k3sup_bin, action, "--ip", ip,
                 "--ssh-key", ssh_key, "--ssh-port", str(ssh_port),
                 "--user", user]
-    if action == "install":
+    if context is not None:
         cmd_args.extend(["--context", context])
     if local:
         cmd_args.append("--local")
@@ -168,17 +164,17 @@ def install(module, k3sup_bin, action, ip, local_path, local, merge,
         cmd_args.append("--local-path")
     if merge:
         cmd_args.append("--merge")
-    if server_ip:
+    if server_ip is not None:
         cmd_args.extend(["--server-ip", server_ip])
-    if server_ssh_port:
+    if server_ssh_port is not None:
         cmd_args.extend(["--server-ssh-port", str(server_ssh_port)])
-    if server_user:
+    if server_user is not None:
         cmd_args.extend(["--server-user", server_user])
     if server:
         cmd_args.append("--server")
     if cluster:
         cmd_args.append("--cluster")
-    if datastore:
+    if datastore is not None:
         cmd_args.extend(["--datastore", datastore])
     if sudo:
         cmd_args.append("--sudo")
@@ -186,11 +182,11 @@ def install(module, k3sup_bin, action, ip, local_path, local, merge,
         cmd_args.append("--skip-install")
     if no_extras:
         cmd_args.append("--no-extras")
-    if k3s_extra_args:
+    if k3s_extra_args is not None:
         cmd_args.extend(["--k3s-extra-args", k3s_extra_args])
-    if k3s_version:
+    if k3s_version is not None:
         cmd_args.extend(["--k3s-version", k3s_version])
-    if k3s_channel:
+    if k3s_channel is not None:
         cmd_args.extend(["--k3s-channel", k3s_channel])
     if ipsec:
         cmd_args.append("--ipsec")
@@ -208,8 +204,7 @@ def install(module, k3sup_bin, action, ip, local_path, local, merge,
 
 
 def is_cluster_installed(module, k3sup_bin, action, ip, local_path,
-                         local, merge, ssh_key, ssh_port, user,
-                         server_ip, server_ssh_port, server_user):
+                         local, merge, ssh_key, ssh_port, user):
     if action == "server":
         action = "install"
     elif action == "agent":
@@ -217,18 +212,13 @@ def is_cluster_installed(module, k3sup_bin, action, ip, local_path,
     cmd_args = [k3sup_bin, action, "--skip-install", "--ip", ip,
                 "--ssh-key", ssh_key, "--ssh-port", str(ssh_port),
                 "--user", user]
-    if local:
-        cmd_args.append("--local")
-    if local_path:
-        cmd_args.append("--local-path")
-    if merge:
-        cmd_args.append("--merge")
-    if server_ip:
-        cmd_args.extend(["--server-ip", server_ip])
-    if server_ssh_port:
-        cmd_args.extend(["--server-ssh-port", str(server_ssh_port)])
-    if server_user:
-        cmd_args.extend(["--server-user", server_user])
+    if action == "install":
+        if local:
+            cmd_args.append("--local")
+        if local_path:
+            cmd_args.append("--local-path")
+        if merge:
+            cmd_args.append("--merge")
 
     cmd = " ".join(cmd_args)
 
@@ -258,7 +248,7 @@ def main():
             local=dict(required=False, default=False, type="bool"),
             merge=dict(required=False, default=False, type="bool"),
             no_extras=dict(required=False, default=False, type="bool"),
-            context=dict(required=False, default="default", type="str"),
+            context=dict(required=False, default=None, type="str"),
             ssh_port=dict(required=False, default=22, type="int"),
             k3s_extra_args=dict(required=False, default=None, type="str"),
             k3s_version=dict(required=False, default=None, type="str"),
@@ -304,8 +294,7 @@ def main():
 
     is_installed = is_cluster_installed(module, k3sup_bin, action, ip,
                                         local_path, local, merge, ssh_key,
-                                        ssh_port, user, server_ip,
-                                        server_ssh_port, server_user)
+                                        ssh_port, user)
 
     if is_installed:
         module.exit_json(changed=False, action=action, ip=ip)
