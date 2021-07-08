@@ -160,8 +160,8 @@ def install(module, k3sup_bin, action, ip, local_path, local, merge,
         cmd_args.extend(["--context", context])
     if local:
         cmd_args.append("--local")
-    if local_path:
-        cmd_args.append("--local-path")
+    if local_path is not None:
+        cmd_args.extend(["--local-path", local_path])
     if merge:
         cmd_args.append("--merge")
     if server_ip is not None:
@@ -215,8 +215,8 @@ def is_cluster_installed(module, k3sup_bin, action, ip, local_path,
     if action == "install":
         if local:
             cmd_args.append("--local")
-        if local_path:
-            cmd_args.append("--local-path")
+        if local_path is not None:
+            cmd_args.extend(["--local-path", local_path])
         if merge:
             cmd_args.append("--merge")
 
