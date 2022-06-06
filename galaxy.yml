@@ -4,7 +4,7 @@ name: "k3sup"
 version: "0.1.8"
 readme: "README.md"
 authors:
-  - "Chris Arceneaux (https://ivan.vandot.rs/)"
+  - "Ivan Vandot (https://ivan.vandot.rs/)"
 description: Manage k3sup
 license_file: "LICENSE"
 tags:
