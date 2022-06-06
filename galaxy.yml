@@ -1,7 +1,7 @@
 ---
 namespace: "vandot"
 name: "k3sup"
-version: "0.1.8"
+version: "0.1.9"
 readme: "README.md"
 authors:
   - "Ivan Vandot (https://ivan.vandot.rs/)"
